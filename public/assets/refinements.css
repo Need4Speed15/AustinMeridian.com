@@ -1,0 +1,250 @@
+/* Shared interface refinements: readable type and distinct brand/product navigation. */
+.eyebrow { font-size: 11px; letter-spacing: .14em; }
+.header-inner nav { font-size: 14px; gap: 30px; }
+.header-inner nav > a { min-height: 44px; display: inline-flex; align-items: center; }
+.brand { font-size: 13px; }
+.button, .text-link { font-size: 14px; }
+.text-link { min-height: 44px; }
+.button { min-height: 48px; }
+.hero-description { font-size: 17px; line-height: 1.8; max-width: 430px; }
+.hero-copy h1 { font-size: clamp(56px, 5.4vw, 80px); }
+.studio-hero { min-height: 540px; padding-block: 60px; }
+.section-heading h2, .adventure-intro h2, .features-section h2 { font-size: 38px; }
+.section-heading .eyebrow { font-size: 11px; }
+.art-coordinate { font-size: 10px; letter-spacing: .12em; }
+.about-section { padding-block: 80px; }
+.about-section h2 { font-size: 42px; line-height: 1.15; }
+.about-copy > p:not(.large-copy) { font-size: 16px; line-height: 1.85; }
+.large-copy { font-size: 22px; }
+.help-strip p { font-size: 15px; overflow-wrap: anywhere; }
+.help-strip > .button { margin-left: auto; flex-shrink: 0; }
+.help-icon .interface-icon { width: 25px; height: 25px; }
+.help-strip h2 { font-size: 24px; }
+.footer-brand { font-size: 14px; }
+.footer-brand > span { font-size: 13px; }
+.footer-links { padding-right: 0; gap: 65px; }
+.footer-links > div { font-size: 14px; gap: 5px; }
+.footer-links a { min-height: 30px; display: inline-flex; align-items: center; }
+.footer-links .eyebrow { font-size: 11px; color: #9aafc5; }
+.footer-bottom { font-size: 12px; align-items: center; }
+.draft-small { font-size: 11px; }
+
+/* Neutral portfolio presentation. FitQuest artwork remains on its product page. */
+.studio-project {
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 36px 40px;
+  gap: 40px;
+}
+.studio-project-meta { font-size: 11px; letter-spacing: .08em; gap: 18px; }
+.studio-project-status { font-size: 11px; padding: 7px 10px; }
+.studio-project-copy h3 { font-size: 36px; margin-block: 18px 12px; }
+.studio-project-copy p { font-size: 16px; max-width: 670px; line-height: 1.8; }
+.project-availability { display: block; font-size: 13px; color: #9eb0c2; margin-top: 12px; }
+.studio-project > .button { align-self: center; white-space: nowrap; }
+
+/* Product navigation and feature presentation. */
+.product-subnav > .container { min-height: 66px; }
+.product-subnav nav { font-size: 14px; gap: 25px; }
+.product-subnav nav a { min-height: 44px; display: inline-flex; align-items: center; }
+.pill { font-size: 11px; letter-spacing: .08em; padding: 7px 10px; }
+.quest-hero-content > .eyebrow { font-size: 11px; }
+.quest-hero-content > p:not(.eyebrow):not(.availability) { font-size: 17px; max-width: 370px; }
+.quest-hero-content > .availability { font-size: 13px; max-width: 420px; }
+.artwork-label { font-size: 10px; letter-spacing: .08em; }
+.adventure-intro { gap: 60px; padding-block: 70px 42px; }
+.adventure-intro > p, .development-panel > div > p:not(.eyebrow) { font-size: 16px; line-height: 1.85; }
+.steps p, .feature-card p { font-size: 16px; line-height: 1.8; }
+.steps article > span { font-size: 13px; }
+.steps { gap: 36px; padding-bottom: 65px; }
+.feature-glyph { display: flex; align-items: flex-start; }
+.feature-glyph .interface-icon { width: 30px; height: 30px; }
+.simple h3 { font-size: 23px; }
+.development-panel h2 { font-size: 38px; }
+.resource-row > a > span { font-size: 11px; letter-spacing: .1em; }
+.resource-row strong { font-size: 19px; }
+.resource-row small { font-size: 12px; }
+
+/* Real source-rendered interface previews, labelled separately from concept art. */
+.interface-section { padding-bottom: 75px; }
+.interface-section .section-heading { align-items: start; }
+.interface-description { max-width: 650px; color: #aec4c7; font-size: 16px; margin-top: 18px; }
+.interface-previews { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 65px; max-width: 780px; margin: 32px auto 0; }
+.interface-preview { margin: 0; min-width: 0; }
+.interface-frame { max-width: 300px; margin-inline: auto; border: 1px solid #486366; padding: 8px; border-radius: 22px; background: #061015; }
+.interface-frame img { width: 100%; border-radius: 15px; }
+.interface-preview figcaption { margin: 20px auto 0; max-width: 300px; }
+.interface-preview h3 { font-size: 22px; margin-bottom: 9px; }
+.interface-preview p { font-size: 15px; color: #aec4c7; line-height: 1.75; }
+.preview-note { font-size: 13px; color: #9fb8bc; margin-top: 28px; }
+
+/* Practical reading pages, with contact available before the FAQ. */
+.document-heading { padding-block: 30px 32px; }
+.breadcrumb { font-size: 13px; margin-bottom: 22px; min-height: 30px; }
+.document-heading h1 { font-size: 48px; line-height: 1.15; letter-spacing: -.035em; }
+.document-heading > p:not(.eyebrow) { font-size: 17px; line-height: 1.8; max-width: 680px; }
+.document-meta { font-size: 12px; gap: 16px; flex-wrap: wrap; }
+.document-layout { grid-template-columns: 200px minmax(0, 760px); gap: 50px; padding-block: 36px 70px; }
+.document-body { font-size: 16px; line-height: 1.85; }
+.document-body h2 { font-size: 28px; }
+.document-body h3 { font-size: 21px; }
+.notice { font-size: 15px; line-height: 1.85; }
+.review-box { padding: 24px; }
+.toc-disclosure { border-bottom: 0; }
+.toc-disclosure > summary { padding: 8px 0 14px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.toc-disclosure > summary::after { content: none; }
+.toc-disclosure[open] > summary .interface-icon { transform: rotate(180deg); }
+.document-toc nav { margin-top: 5px; }
+.document-toc a { font-size: 13px; padding-block: 8px; }
+.quick-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 32px; padding-block: 24px; border-bottom: 1px solid var(--line); }
+.quick-actions .button { gap: 12px; }
+.quick-actions .text-link { gap: 10px; }
+.support-layout { padding-block: 38px 70px; gap: 60px; grid-template-columns: minmax(0, 1.5fr) minmax(310px, 1fr); }
+.support-layout h2 { font-size: 32px; }
+summary { font-size: 16px; padding-block: 22px; }
+details > div { font-size: 16px; line-height: 1.85; }
+.contact-panel > p:not(.eyebrow) { font-size: 16px; }
+.contact-panel h2 { font-size: 32px; }
+.contact-panel .eyebrow { font-size: 11px; }
+.contact-email { font-size: 14px; flex-wrap: wrap; gap: 9px; }
+.contact-panel p.contact-note { font-size: 13px; line-height: 1.8; }
+.contact-panel > .text-link { font-size: 14px; }
+.contact-symbol .interface-icon { width: 32px; height: 32px; }
+
+@media (max-width: 1100px) {
+  .header-inner nav { gap: 23px; }
+  .studio-project { padding: 30px; gap: 28px; }
+  .studio-project > .button { gap: 15px; padding-inline: 17px; }
+  .studio-project-meta { gap: 10px; }
+  .document-layout { gap: 32px; grid-template-columns: 180px minmax(0, 1fr); }
+  .support-layout { gap: 30px; }
+  .contact-panel { padding: 24px; }
+  .product-subnav nav { gap: 18px; }
+  .resource-row strong { font-size: 17px; }
+}
+
+@media (max-width: 900px) {
+  .header-inner nav > a { font-size: 16px; }
+  .hero-description { font-size: 16px; }
+  .art-coordinate { display: none; }
+  .studio-project { grid-template-columns: minmax(0, 1fr) auto; }
+  .studio-project-copy p { font-size: 16px; }
+  .studio-project-meta { font-size: 11px; }
+  .studio-project-status { font-size: 10px; }
+  .product-subnav > .container { gap: 20px; flex-wrap: wrap; padding-block: 8px; }
+  .product-subnav nav { gap: 16px; }
+  .product-subnav .pill { margin-left: 0; }
+  .product-subnav > .container > .pill { display: none; }
+  .document-body { font-size: 16px; }
+  .support-layout { grid-template-columns: minmax(0, 1fr); }
+  .contact-panel { position: static; max-width: none; }
+  .contact-email { font-size: 16px; }
+  .contact-panel .button { width: auto; min-width: 220px; }
+  .interface-previews { gap: 20px; }
+}
+
+@media (max-width: 680px) {
+  .studio-hero { display: block; min-height: 0; padding-block: 30px 38px; overflow: visible; }
+  .hero-copy { grid-column: 1 / -1; grid-row: 1; }
+  .hero-copy .eyebrow { font-size: 10px; letter-spacing: .1em; max-width: 100%; min-height: 0; }
+  .hero-copy h1 { font-size: clamp(36px, 10.6vw, 56px); line-height: 1.15; margin-top: 15px; margin-bottom: 20px; }
+  .hero-description { font-size: 16px; line-height: 1.8; max-width: 100%; }
+  .hero-copy > .button { margin-top: 23px; font-size: 14px; }
+  .brand-art { display: none; }
+  .brand-art > img { width: 118px; max-width: none; mask-image: none; }
+  .orbital { display: none; }
+  .projects-section { padding-top: 6px; }
+  .section-heading h2, .adventure-intro h2, .features-section h2 { font-size: 31px; }
+  .section-heading .eyebrow { font-size: 10px; }
+  .section-heading { margin-bottom: 22px; }
+  .studio-project { grid-template-columns: 1fr; padding: 26px 23px; gap: 24px; }
+  .studio-project-meta { gap: 12px; font-size: 11px; }
+  .studio-project-status { font-size: 10px; }
+  .studio-project-copy h3 { font-size: 32px; margin-top: 17px; }
+  .studio-project-copy p { font-size: 16px; }
+  .studio-project > .button { justify-self: start; font-size: 14px; }
+  .project-availability { font-size: 13px; }
+  .about-section { padding-block: 55px; gap: 24px; }
+  .about-section h2 { font-size: 33px; }
+  .large-copy { font-size: 21px; }
+  .about-copy > p:not(.large-copy) { font-size: 16px; }
+  .about-copy .text-link { margin-top: 18px; }
+  .help-strip { grid-template-columns: 1fr; gap: 18px; margin-bottom: 45px; }
+  .help-strip h2 { font-size: 24px; }
+  .help-strip p { font-size: 15px; max-width: none; }
+  .help-strip .help-icon { display: none; }
+  .help-strip > .button { margin-left: 0; justify-self: start; }
+  .footer-links { gap: 25px; padding-right: 0; }
+  .footer-links > div { font-size: 13px; }
+  .footer-links .eyebrow { font-size: 10px; }
+  .footer-brand { font-size: 13px; }
+  .footer-bottom { font-size: 12px; }
+  .product-subnav > .container { display: block; padding-block: 8px 2px; }
+  .product-subnav > .container > a { font-size: 25px; }
+  .product-subnav nav { justify-content: space-between; font-size: 13px; gap: 10px; margin-top: 2px; }
+  .quest-hero { min-height: 610px; }
+  .quest-hero-content { padding-block: 80px 45px; }
+  .quest-hero h1 { font-size: clamp(48px, 13vw, 65px); }
+  .quest-hero-content > .eyebrow { font-size: 10px; }
+  .quest-hero-content > p:not(.eyebrow):not(.availability) { font-size: 16px; }
+  .quest-hero .button { font-size: 14px; }
+  .quest-hero-content > .availability { font-size: 13px; line-height: 1.8; }
+  .quest-hero > .artwork-label { font-size: 9px; left: 20px; right: 20px; line-height: 1.6; }
+  .adventure-intro { padding-block: 48px 30px; gap: 22px; }
+  .adventure-intro > p { font-size: 16px; }
+  .steps { gap: 24px; padding-bottom: 50px; }
+  .steps p, .feature-card p { font-size: 16px; }
+  .steps h3 { font-size: 23px; }
+  .interface-section { padding-bottom: 50px; }
+  .interface-previews { grid-template-columns: 1fr; gap: 36px; }
+  .interface-frame { max-width: 275px; }
+  .interface-preview figcaption { max-width: none; }
+  .interface-preview h3 { font-size: 23px; }
+  .interface-preview p { font-size: 16px; }
+  .illustrated h3, .simple h3 { font-size: 24px; }
+  .development-panel h2 { font-size: 32px; }
+  .development-panel > div > p:not(.eyebrow) { font-size: 16px; }
+  .resource-row > a > span { font-size: 11px; }
+  .resource-row strong { font-size: 19px; }
+  .document-heading { padding-block: 22px 26px; }
+  .breadcrumb { font-size: 13px; margin-bottom: 15px; }
+  .document-heading .eyebrow { font-size: 10px; margin-bottom: 10px; }
+  .document-heading h1 { font-size: clamp(31px, 9vw, 38px); line-height: 1.15; }
+  .document-heading > p:not(.eyebrow) { font-size: 16px; line-height: 1.8; margin-top: 15px; }
+  .document-meta { font-size: 12px; gap: 10px; margin-top: 18px; }
+  .document-meta .pill { white-space: normal; font-size: 10px; }
+  .document-layout { grid-template-columns: 1fr; gap: 24px; padding-block: 20px 50px; }
+  .document-toc { padding-bottom: 12px; }
+  .toc-disclosure > summary { font-size: 15px; padding-block: 10px; }
+  .document-toc nav { grid-template-columns: 1fr; padding-left: 15px; }
+  .document-toc a { font-size: 14px; min-height: 44px; display: flex; align-items: center; }
+  .document-body { font-size: 16px; }
+  .document-body h2 { font-size: 25px; }
+  .document-body h3 { font-size: 20px; }
+  .notice { font-size: 15px; padding: 20px; }
+  .review-box { padding: 20px; }
+  .quick-actions { display: flex; gap: 8px 20px; padding-block: 20px; }
+  .quick-actions .button { flex-basis: 100%; justify-content: flex-start; }
+  .quick-actions .text-link { font-size: 13px; gap: 8px; }
+  .support-layout { padding-top: 28px; gap: 35px; }
+  .support-layout h2 { font-size: 28px; }
+  summary { font-size: 16px; }
+  details > div { font-size: 16px; }
+  .contact-panel { padding: 24px; }
+  .contact-panel h2 { font-size: 29px; }
+  .contact-panel > p:not(.eyebrow) { font-size: 16px; }
+  .contact-panel .eyebrow { font-size: 10px; }
+  .contact-email { font-size: 14px; }
+  .contact-panel .button { min-width: 0; width: 100%; }
+  .contact-panel p.contact-note { font-size: 13px; }
+  .contact-panel > .text-link { font-size: 14px; }
+  .not-found h1 { font-size: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-disclosure > summary .interface-icon { transition: none; }
+}
+
+@media print {
+  .quick-actions { display: none; }
+  .document-body { font-size: 11pt; }
+}

@@ -1,0 +1,49 @@
+name: Publish approved website to GitHub Pages
+
+# Manual only. Do not enable publication until the owner has reviewed the site.
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish the approved website publicly (leave unchecked during preparation)'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: inputs.publish == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Verify release review is complete
+        run: node scripts/release-check.mjs
+      - run: npm run build
+      - run: npm run check
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

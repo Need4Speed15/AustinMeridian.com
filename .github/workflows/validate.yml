@@ -1,0 +1,24 @@
+name: Validate website (no deployment)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm run build
+      - run: npm run check
+      - run: node --check public/assets/site.js
+      - run: node --check scripts/release-check.mjs
