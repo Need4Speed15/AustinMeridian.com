@@ -4,8 +4,9 @@ const pending=Object.entries(review).filter(([,v])=>v!==true).map(([k])=>k);
 const privacy=await readFile(new URL('../src/pages/privacy.html',import.meta.url),'utf8');
 const deletion=await readFile(new URL('../src/pages/delete-account.html',import.meta.url),'utf8');
 const build=await readFile(new URL('./build.mjs',import.meta.url),'utf8');
-if(/DRAFT FOR OWNER REVIEW|No effective date assigned|Decisions required before publication/.test(privacy))pending.push('final privacy text and effective date');
-if(/OWNER REVIEW/.test(deletion))pending.push('final account-deletion status wording');
+if(/DRAFT FOR OWNER REVIEW|No effective date assigned|Decisions required before publication|Effective date pending publication|review copy/.test(privacy))pending.push('final privacy text and effective date');
+if(/OWNER REVIEW|review copy|still require operator approval/.test(deletion))pending.push('final account-deletion status wording');
+if(!/Effective [A-Z][a-z]+ \d{1,2}, \d{4}/.test(privacy))pending.push('published privacy effective date');
 if(/draft:\s*true/.test(build))pending.push('remove draft metadata/labels only after owner approval');
 if(pending.length){console.error('Publication is not approved. Pending:\n- '+pending.join('\n- '));process.exitCode=1;}
 else console.log('Release-review declarations and final text checks passed.');

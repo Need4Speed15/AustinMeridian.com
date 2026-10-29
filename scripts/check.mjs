@@ -29,15 +29,15 @@ for(const file of htmlFiles){
     if(targetUrl.hash){const targetHtml=await readFile(target,'utf8');assert(targetHtml.includes(`id="${targetUrl.hash.slice(1)}"`),`Broken anchor ${ref} in ${file}`);}
   }
   if(file.endsWith('privacy\\index.html')||file.endsWith('delete-account\\index.html')||file.includes('/privacy/')||file.includes('/delete-account/')){
-    assert(html.includes('noindex, nofollow'),'Review drafts must not be indexed');
-    assert(/DRAFT FOR OWNER REVIEW|OWNER REVIEW/.test(html),'Review label must remain visible');
+    assert(html.includes('index, follow')&&!html.includes('noindex, nofollow'),'Approved legal pages must be indexable');
+    assert(!/DRAFT FOR OWNER REVIEW|OWNER REVIEW|review copy|Effective date pending publication/i.test(html),'Approved legal pages must not contain review placeholders');
   }
 }
-const css=await readFile(resolve(root,'assets/styles.css'),'utf8');
+const css=await readFile(resolve(root,'assets/design.css'),'utf8');
 assert(css.includes('prefers-reduced-motion:reduce'),'Reduced motion support required');
 assert(css.includes(':focus-visible'),'Visible focus required');
 for(const match of css.matchAll(/url\((?:['"])?\.\/([^)'"\s]+)/g))await stat(resolve(root,'assets',match[1]));
 assert(files.every(p=>!/[\\/]\.(?:env|git)(?:[.\\/]|$)|\.apk$|service.account|google-services\.json|\.jks$|\.keystore$/i.test(p)),'Private mobile/runtime material must not be deployed');
 const size=(await Promise.all(files.map(p=>stat(p)))).reduce((n,s)=>n+s.size,0);
-console.log(`PASS: ${htmlFiles.length} pages; internal links/anchors/assets; metadata; alt text; draft gates; reduced motion/focus; private-file exclusions.`);
+console.log(`PASS: ${htmlFiles.length} pages; internal links/anchors/assets; metadata; alt text; publication metadata; reduced motion/focus; private-file exclusions.`);
 console.log(`Static output: ${files.length} files, ${(size/1024/1024).toFixed(2)} MiB. No package dependencies.`);

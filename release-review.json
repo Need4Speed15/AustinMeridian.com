@@ -1,7 +1,7 @@
 {
   "designApproved": true,
-  "privacyPolicyApproved": false,
-  "deletionInformationApproved": false,
-  "operatorAudienceAndRetentionConfirmed": false,
-  "publicRepositoryOrEligiblePlanConfirmed": false
+  "privacyPolicyApproved": true,
+  "deletionInformationApproved": true,
+  "operatorAudienceAndRetentionConfirmed": true,
+  "publicRepositoryOrEligiblePlanConfirmed": true
 }
