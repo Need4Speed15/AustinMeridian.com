@@ -132,6 +132,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .meridian-structure>picture{display:block}.meridian-structure>picture>img{width:100%;height:auto}
 .resource-navigation{display:flex;align-items:center;gap:26px;min-height:52px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
 .resource-navigation a{display:flex;align-items:center;min-height:44px}.resource-navigation a[aria-current]{color:var(--accent)}
+.interface-section>.preview-note{margin:0 auto 28px}.capture-provenance{max-width:800px;margin:24px auto 0}
 .copy-email-tools{display:flex;flex-wrap:wrap;gap:8px 15px;align-items:center;margin-top:14px}
 .copy-email{min-height:44px;padding:8px 14px;border:1px solid #505057;border-radius:4px;background:transparent;color:var(--text);font-size:13px;cursor:pointer;transition:background .2s,border-color .2s}
 .copy-email:hover{background:#C6A76B12;border-color:var(--accent)}.copy-feedback{font-size:13px;color:#C9B48D;line-height:1.6}
