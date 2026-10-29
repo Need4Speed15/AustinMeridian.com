@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, relative, extname } from 'node:path';
 
@@ -15,6 +16,12 @@ for(const file of htmlFiles){
   ids.set(file,new Set(found));
   assert.equal((html.match(/<h1(?:\s|>)/g)||[]).length,1,`Exactly one h1 in ${file}`);
   for(const required of ['<title>','name="description"','rel="canonical"','name="viewport"','property="og:image"','<html lang="en"','Skip to content','<main id="main"']) assert(html.includes(required),`${file} missing ${required}`);
+  for (const [name,ext] of [['design','css'],['site','js']]) {
+    const ref = html.match(new RegExp(`assets/(${name}\\.([a-f0-9]{12})\\.${ext})`));
+    assert(ref, `Missing versioned ${ext} reference in ${file}`);
+    const bytes = await readFile(resolve(root,'assets',ref[1]));
+    assert.equal(createHash('sha256').update(bytes).digest('hex').slice(0,12),ref[2],`Incorrect ${ext} fingerprint in ${file}`);
+  }
   assert(!/\{\{[^{}]+\}\}/.test(html),`Unresolved template marker in ${file}`);
   for(const image of html.matchAll(/<img\b[^>]*>/g)) assert(/\balt="[^"]*"/.test(image[0]),`Missing image alt in ${file}`);
   assert(!/<(?:iframe|form)\b|https?:\/\/[^"\s]+\.apk|support@gmail\.com|TODO/.test(html),`Unexpected embed, form, APK or placeholder in ${file}`);

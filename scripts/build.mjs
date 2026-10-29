@@ -1,11 +1,12 @@
 import { mkdir, readFile, writeFile, cp } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const out = resolve(root, 'dist');
 const origin = 'https://austinmeridian.com';
-const socialImage = `${origin}/assets/austin-meridian-social-v1.jpg`;
-const socialAlt = 'Austin Meridian: Built on vision. Defined by purpose. Independent apps, games and ideas.';
+const corporateSocialImage = `${origin}/assets/austin-meridian-social-v1.jpg`;
+const corporateSocialAlt = 'Austin Meridian: Built on vision. Defined by purpose. Independent apps, games and ideas.';
 const pages = [
   { source: 'home', path: '/', title: 'Austin Meridian — Independent projects & new possibilities', description: 'Austin Meridian is the umbrella brand for independent projects, apps, games, and ideas. Explore our portfolio, beginning with FitQuest.', theme: 'studio' },
   { source: 'fitquest', path: '/fitquest/', title: 'FitQuest — Turn your effort into adventure | Austin Meridian', description: 'Complete real exercises, take on fantasy battles, and build your own adventure. Discover FitQuest, currently in development and testing.', theme: 'quest' },
@@ -26,22 +27,40 @@ function icon(type = 'arrow') {
   return `<svg class="interface-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[type] || paths.arrow}</svg>`;
 }
 function header(page) {
-  const nav = [['/', 'Home'], ['/#projects', 'Projects'], ['/#about', 'About']];
-  return `<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner"><a class="brand" href="${page.base}" aria-label="Austin Meridian home"><span class="brand-symbol" aria-hidden="true"><img src="${page.base}assets/austin-meridian-symbol.png" alt="" width="512" height="256"></span><span class="brand-name">AUSTIN<span>MERIDIAN</span></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button><nav id="primary-nav" aria-label="Main navigation">${nav.map(([href,label])=>`<a href="${local(href,page.base)}"${page.path===href?' aria-current="page"':''}>${label}</a>`).join('')}<a class="nav-feature" href="${page.base}#contact">Contact ${icon('mail')}</a></nav></div><span class="page-progress" aria-hidden="true"></span></header>`;
+  const nav = [['/', 'Home'], ['/#projects', 'Projects'], ['/fitquest/', 'FitQuest'], ['/#about', 'About']];
+  return `<a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner"><a class="brand" href="${page.base}" aria-label="Austin Meridian home"><span class="brand-symbol" aria-hidden="true"><img src="${page.base}assets/austin-meridian-symbol-160.webp" alt="" width="160" height="80"></span><span class="brand-name">AUSTIN<span>MERIDIAN</span></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation"><span></span><span></span></button><nav id="primary-nav" aria-label="Main navigation">${nav.map(([href,label])=>`<a href="${local(href,page.base)}"${page.path===href?' aria-current="page"':href==='/fitquest/'&&page.path.startsWith('/fitquest/')?' aria-current="location"':''}>${label}</a>`).join('')}<a class="nav-feature" href="${page.base}#contact">Contact ${icon('mail')}</a></nav></div><span class="page-progress" aria-hidden="true"></span></header>`;
 }
 function local(href, base) { return href.startsWith('/') ? base + href.slice(1) : href; }
 function footer(page) {
-  return `<footer class="site-footer"><div class="container"><div class="footer-top"><a class="footer-brand" href="${page.base}"><img src="${page.base}assets/austin-meridian-gold-transparent.png" alt="Austin Meridian" width="1536" height="1024"><span>Independent projects. Shared purpose.</span></a><div class="footer-links"><div><span class="eyebrow">AUSTIN MERIDIAN</span><a href="${page.base}#projects">Projects</a><a href="${page.base}#about">About</a><a href="${page.base}#contact">Contact</a></div><div><span class="eyebrow">FITQUEST RESOURCES</span><a href="${page.base}fitquest/">Explore FitQuest</a><a href="${page.base}fitquest/support/">FitQuest support</a><a href="${page.base}fitquest/privacy/">Privacy policy</a><a href="${page.base}fitquest/delete-account/">Account &amp; data</a></div></div></div><div class="footer-bottom"><span>© 2026 Austin Meridian</span><span>INDEPENDENT BY DESIGN.</span><a href="mailto:AustinMeridianHQ@gmail.com">Get in touch ${icon()}</a></div></div></footer>`;
+  return `<footer class="site-footer"><div class="container"><div class="footer-top"><a class="footer-brand" href="${page.base}"><img src="${page.base}assets/austin-meridian-footer.webp" alt="Austin Meridian" width="320" height="213" loading="lazy" decoding="async"><span>Independent projects. Shared purpose.</span></a><div class="footer-links"><div><span class="eyebrow">AUSTIN MERIDIAN</span><a href="${page.base}#projects">Projects</a><a href="${page.base}#about">About</a><a href="${page.base}#contact">Contact</a></div><div><span class="eyebrow">FITQUEST RESOURCES</span><a href="${page.base}fitquest/">Explore FitQuest</a><a href="${page.base}fitquest/support/">FitQuest support</a><a href="${page.base}fitquest/privacy/">Privacy policy</a><a href="${page.base}fitquest/delete-account/">Account deletion</a></div></div></div><div class="footer-bottom"><span>© 2026 Austin Meridian</span><span>INDEPENDENT BY DESIGN.</span><a href="mailto:AustinMeridianHQ@gmail.com">Get in touch ${icon()}</a></div></div></footer>`;
 }
 await mkdir(out, {recursive: true});
 await cp(resolve(root,'public'), out, {recursive: true});
+// Content-address shared assets so a deployment cannot mix old CSS/JS with new HTML.
+// Retain earlier fingerprints so previously cached HTML can still load its assets.
+async function fingerprint(name) {
+  const bytes = await readFile(resolve(out,'assets',name));
+  const hash = createHash('sha256').update(bytes).digest('hex').slice(0,12);
+  const versioned = name.replace(/\.(css|js)$/,'.'+hash+'.$1');
+  await writeFile(resolve(out,'assets',versioned),bytes);
+  return versioned;
+}
+const cssFile = await fingerprint('design.css');
+const jsFile = await fingerprint('site.js');
+function resourceNav(page) {
+  if (page.theme !== 'legal') return '';
+  const links = [['/fitquest/','FitQuest'],['/fitquest/support/','Support'],['/fitquest/privacy/','Privacy policy'],['/fitquest/delete-account/','Account deletion']];
+  return '<nav class="resource-navigation container" aria-label="FitQuest resources">'+links.map(([path,label])=>'<a href="'+local(path,page.base)+'"'+(page.path===path?' aria-current="page"':'')+'>'+label+'</a>').join('')+'</nav>';
+}
 for (const page of pages) {
+  const socialImage = page.theme==='quest' || page.theme==='legal' ? origin+'/assets/fitquest-social-v1.jpg' : corporateSocialImage;
+  const socialAlt = page.theme==='quest' || page.theme==='legal' ? 'FitQuest: Turn your effort into adventure. An Austin Meridian project, in development.' : corporateSocialAlt;
   const depth = page.path.split('/').filter(Boolean).length;
   page.base = page.path === '/404.html' ? '/' : depth ? '../'.repeat(depth) : './';
   let content = await readFile(resolve(root,`src/pages/${page.source}.html`),'utf8');
   content = content.replaceAll('{{base}}',page.base).replaceAll('{{arrow}}',icon()).replace(/\{\{icon:([a-z]+)\}\}/g,(_,name)=>icon(name));
   const html = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>${page.title}</title><meta name="description" content="${page.description}"><link rel="canonical" href="${origin}${page.path}"><meta name="robots" content="${page.draft||page.noindex?'noindex, nofollow':'index, follow'}"><meta property="og:type" content="website"><meta property="og:site_name" content="Austin Meridian"><meta property="og:title" content="${page.title}"><meta property="og:description" content="${page.description}"><meta property="og:url" content="${origin}${page.path}"><meta property="og:image" content="${socialImage}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${socialAlt}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${page.title}"><meta name="twitter:description" content="${page.description}"><meta name="twitter:image" content="${socialImage}"><meta name="twitter:image:alt" content="${socialAlt}"><meta name="theme-color" content="#0B0D10"><link rel="icon" type="image/svg+xml" href="${page.base}assets/favicon.svg"><link rel="stylesheet" href="${page.base}assets/design.css"><script src="${page.base}assets/site.js" defer></script><noscript><style>@media(max-width:900px){.header-inner{height:auto;flex-wrap:wrap;padding-block:15px}.menu-toggle{display:none}.header-inner nav{display:flex;position:static;width:100%;padding:12px 0;background:transparent;border:0}}</style></noscript></head><body class="theme-${page.theme}">${header(page)}<main id="main" tabindex="-1">${content}</main>${footer(page)}</body></html>`;
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><title>${page.title}</title><meta name="description" content="${page.description}"><link rel="canonical" href="${origin}${page.path}"><meta name="robots" content="${page.draft||page.noindex?'noindex, nofollow':'index, follow'}"><meta property="og:type" content="website"><meta property="og:site_name" content="Austin Meridian"><meta property="og:title" content="${page.title}"><meta property="og:description" content="${page.description}"><meta property="og:url" content="${origin}${page.path}"><meta property="og:image" content="${socialImage}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${socialAlt}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${page.title}"><meta name="twitter:description" content="${page.description}"><meta name="twitter:image" content="${socialImage}"><meta name="twitter:image:alt" content="${socialAlt}"><meta name="theme-color" content="#0B0D10"><link rel="icon" type="image/svg+xml" href="${page.base}assets/favicon.svg"><link rel="stylesheet" href="${page.base}assets/${cssFile}"><script src="${page.base}assets/${jsFile}" defer></script><noscript><style>@media(max-width:900px){.header-inner{height:auto;flex-wrap:wrap;padding-block:15px}.menu-toggle{display:none}.header-inner nav{display:flex;position:static;width:100%;padding:12px 0;background:transparent;border:0}}</style></noscript></head><body class="theme-${page.theme}">${header(page)}${resourceNav(page)}<main id="main" tabindex="-1">${content}</main>${footer(page)}</body></html>`;
   const destination = resolve(out, page.path === '/404.html' ? '404.html' : '.'+page.path+'index.html');
   await mkdir(dirname(destination),{recursive:true});
   await writeFile(destination,html);

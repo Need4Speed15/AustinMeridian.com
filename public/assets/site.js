@@ -38,8 +38,9 @@ function updateScrollUI() {
     if (section !== currentSection) {
       currentSection = section;
       for (const link of navigationLinks) {
-        const hash = new URL(link.href).hash.slice(1);
-        const active = section ? hash === section : !hash;
+        const target = new URL(link.href);
+        const hash = target.hash.slice(1);
+        const active = target.pathname === location.pathname && (section ? hash === section : !hash);
         if (active) link.setAttribute('aria-current', section ? 'location' : 'page');
         else link.removeAttribute('aria-current');
       }
@@ -58,6 +59,43 @@ function updateMotion() {
 }
 motionPreference.addEventListener('change', updateMotion);
 updateMotion();
+
+// Offer a direct copy action as an alternative to opening an email application.
+for (const address of document.querySelectorAll('.contact-address, .contact-email')) {
+  const email = address.getAttribute('href')?.match(/^mailto:([^?]+)/i)?.[1];
+  if (!email) continue;
+  const tools = document.createElement('div');
+  tools.className = 'copy-email-tools';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'copy-email';
+  button.textContent = 'Copy email address';
+  const feedback = document.createElement('span');
+  feedback.className = 'copy-feedback';
+  feedback.setAttribute('role', 'status');
+  tools.append(button, feedback);
+  address.after(tools);
+  button.addEventListener('click', async () => {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(decodeURIComponent(email));
+      feedback.textContent = 'Email address copied.';
+    } catch {
+      let fallback = tools.querySelector('input');
+      if (!fallback) {
+        fallback = document.createElement('input');
+        fallback.className = 'copy-email-fallback';
+        fallback.readOnly = true;
+        fallback.value = decodeURIComponent(email);
+        fallback.setAttribute('aria-label', 'Email address to copy');
+        tools.append(fallback);
+      }
+      fallback.focus();
+      fallback.select();
+      feedback.textContent = 'Copy the selected address using your device’s copy command.';
+    }
+  });
+}
 
 // Keep one accessible label; the second line is only a visual hover treatment.
 for (const link of document.querySelectorAll('.button, .text-link, .header-inner nav>a, .contact-address, .footer-bottom>a')) {
@@ -127,3 +165,14 @@ if (contents) {
     if (event.target.closest('a') && narrow.matches) contents.open = false;
   });
 }
+
+// Printed help/policies include disclosure contents, then restore the reader's view.
+let closedBeforePrint = [];
+window.addEventListener('beforeprint', () => {
+  closedBeforePrint = [...document.querySelectorAll('details:not([open])')];
+  closedBeforePrint.forEach(detail => { detail.open = true; });
+});
+window.addEventListener('afterprint', () => {
+  closedBeforePrint.forEach(detail => { detail.open = false; });
+  closedBeforePrint = [];
+});
