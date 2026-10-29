@@ -39,7 +39,8 @@ await cp(resolve(root,'public'), out, {recursive: true});
 // Content-address shared assets so a deployment cannot mix old CSS/JS with new HTML.
 // Retain earlier fingerprints so previously cached HTML can still load its assets.
 async function fingerprint(name) {
-  const bytes = await readFile(resolve(out,'assets',name));
+  // Normalize authoring line endings so Windows and Linux publish identical URLs.
+  const bytes = Buffer.from((await readFile(resolve(out,'assets',name),'utf8')).replaceAll('\r\n','\n'));
   const hash = createHash('sha256').update(bytes).digest('hex').slice(0,12);
   const versioned = name.replace(/\.(css|js)$/,'.'+hash+'.$1');
   await writeFile(resolve(out,'assets',versioned),bytes);
