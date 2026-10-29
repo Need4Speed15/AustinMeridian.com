@@ -105,13 +105,13 @@ if ('IntersectionObserver' in window && !motionPreference.matches) {
   });
 }
 
-// Draw each scene once as it enters view; there are no continuous scene loops.
+// Reveal each scene once, but keep tracking visibility for decorative loops.
 const scenes = [...document.querySelectorAll('.motion-scene')];
 if ('IntersectionObserver' in window) {
   const sceneObserver = new IntersectionObserver(entries => {
-    for (const entry of entries) if (entry.isIntersecting) {
-      entry.target.classList.add('is-in-view');
-      sceneObserver.unobserve(entry.target);
+    for (const entry of entries) {
+      entry.target.classList.toggle('is-active', entry.isIntersecting);
+      if (entry.isIntersecting) entry.target.classList.add('is-in-view');
     }
   }, { threshold: .15 });
   scenes.forEach(scene => sceneObserver.observe(scene));

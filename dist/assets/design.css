@@ -79,6 +79,28 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 .vision-inner{position:relative;z-index:1}.vision-meridian{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1100px,130%);height:110%;pointer-events:none;stroke:var(--accent);stroke-width:.8;opacity:.16}.vision-meridian .orbit-inner{stroke-opacity:.5}.line-draw{stroke-dasharray:1;stroke-dashoffset:0}
 [data-motion=running] .motion-scene.is-in-view .line-draw{animation:meridian-draw 2.8s var(--ease) both}
 @keyframes meridian-draw{from{stroke-dashoffset:1;opacity:0}to{stroke-dashoffset:0;opacity:1}}
+/* Ambient geometry stays behind the copy and runs only while its scene is visible. */
+.mobile-meridian{display:none}
+.vision-orbit{transform-box:view-box;transform-origin:500px 220px}
+[data-motion=running] .vision-orbit{animation:vision-orbit-drift 26s ease-in-out infinite;animation-play-state:paused}
+[data-motion=running] .vision-orbit-inner{animation-name:vision-orbit-counter;animation-duration:33s;animation-delay:-9s}
+[data-motion=running] .vision-crosslines{animation-name:vision-line-drift;animation-duration:29s;animation-delay:-6s}
+[data-motion=running] .vision-section.is-active .vision-orbit{animation-play-state:running}
+.motion-suspended .vision-orbit{animation-play-state:paused!important}
+@keyframes vision-orbit-drift{0%,100%{transform:translate(-12px,8px) rotate(-4deg)}50%{transform:translate(18px,-12px) rotate(5deg)}}
+@keyframes vision-orbit-counter{0%,100%{transform:translate(14px,-8px) rotate(5deg)}50%{transform:translate(-20px,14px) rotate(-6deg)}}
+@keyframes vision-line-drift{0%,100%{transform:translate(-12px,6px)}50%{transform:translate(18px,-12px)}}
+@keyframes mobile-orbit-drift{0%,100%{transform:translate(-8px,6px) rotate(-5deg)}50%{transform:translate(14px,-12px) rotate(6deg)}}
+@keyframes mobile-orbit-trace{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(max-width:680px){
+  .mobile-meridian{display:block;position:absolute;top:0;right:-35%;width:150%;height:100%;pointer-events:none;stroke:var(--accent);stroke-width:.7;opacity:.2;overflow:visible}
+  .mobile-orbit{transform-box:view-box;transform-origin:320px 220px}
+  .mobile-orbit-trace{stroke-width:1.2;stroke-dasharray:.065 .935;stroke-linecap:round;stroke-opacity:.75}
+  [data-motion=running] .mobile-orbit{animation:mobile-orbit-drift 22s ease-in-out infinite}
+  [data-motion=running] .mobile-orbit-trace{animation:mobile-orbit-trace 16s linear infinite}
+  [data-motion=running] .hero-horizon>span{animation-duration:14s;animation-iteration-count:infinite}
+  .vision-section .vision-meridian{opacity:.19}
+}
 .steps{position:relative}.steps::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,#C6A76B15,#C6A76B90,#C6A76B15);transform-origin:left;pointer-events:none}
 .steps article>span{display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;border:1px solid #C6A76B45;border-radius:50%;font-size:11px;background:var(--bg)}
 [data-motion=running] .steps.is-in-view::before{animation:journey-line 1.3s var(--ease) both}
