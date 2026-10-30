@@ -177,44 +177,119 @@ window.addEventListener('afterprint', () => {
   closedBeforePrint = [];
 });
 
-// Decorative brand response: one frame per pointer update; touch never captures scrolling.
+// Map a pointer segment to the first crossed edge and its clockwise perimeter distance.
+function frameEdgeCrossing(from, to, width, height) {
+  const edges = [
+    [{x:0,y:0},{x:width,y:0},0],
+    [{x:width,y:0},{x:width,y:height},width],
+    [{x:width,y:height},{x:0,y:height},width+height],
+    [{x:0,y:height},{x:0,y:0},2*width+height]
+  ];
+  const dx=to.x-from.x, dy=to.y-from.y;
+  let hit;
+  for (const [a,b,start] of edges) {
+    const ex=b.x-a.x, ey=b.y-a.y, denominator=dx*ey-dy*ex;
+    if (Math.abs(denominator)<.00001) continue;
+    const ax=a.x-from.x, ay=a.y-from.y;
+    const t=(ax*ey-ay*ex)/denominator, u=(ax*dy-ay*dx)/denominator;
+    if(t>0 && t<=1 && u>=0 && u<=1 && (!hit || t<hit.t)) {
+      hit={t,distance:start+u*Math.hypot(ex,ey)};
+    }
+  }
+  return hit;
+}
+
+// Account for the current skew/drift instead of testing an axis-aligned bounding box.
+function frameLocalPoint(frame, point) {
+  const style=getComputedStyle(frame);
+  const width=parseFloat(style.width), height=parseFloat(style.height);
+  const [ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const matrix=new DOMMatrix(style.transform==='none'?undefined:style.transform);
+  const corners=[[0,0],[width,0],[width,height],[0,height]].map(([x,y])=> {
+    const p=new DOMPoint(x-ox,y-oy).matrixTransform(matrix);
+    return {x:p.x+ox,y:p.y+oy};
+  });
+  const rect=frame.getBoundingClientRect();
+  const p=new DOMPoint(point.x-rect.left+Math.min(...corners.map(p=>p.x))-ox,
+    point.y-rect.top+Math.min(...corners.map(p=>p.y))-oy).matrixTransform(matrix.inverse());
+  return {x:p.x+ox-.5,y:p.y+oy-.5,width:width-1,height:height-1};
+}
+
+// No pointer-following displacement: interaction only illuminates crossed frame edges.
 if (motionStage) {
-  let responseFrame = 0;
-  let settleTimer = 0;
-  let point;
-  const resetBrandResponse = () => {
-    cancelAnimationFrame(responseFrame);
-    clearTimeout(settleTimer);
-    responseFrame = 0;
-    motionStage.classList.remove("brand-engaged");
-    for (const name of ["--brand-x", "--brand-y", "--brand-turn"]) motionStage.style.removeProperty(name);
+  const frames=[...motionStage.querySelectorAll('.structure-frame')];
+  const active=new Map();
+  const cooldown=new WeakMap();
+  let previous, pending, crossingFrame=0;
+  const clearFrameTraces=()=> {
+    cancelAnimationFrame(crossingFrame);
+    crossingFrame=0;
+    previous=undefined;
+    for(const [frame,effect] of active) {
+      effect.animations.forEach(animation=>animation.cancel());
+      effect.svg.remove();
+      active.delete(frame);
+    }
   };
-  const queueBrandResponse = event => {
-    if (motionPreference.matches || document.hidden) return;
-    point = { x: event.clientX, y: event.clientY, touch: event.pointerType !== "mouse" };
-    if (responseFrame) return;
-    responseFrame = requestAnimationFrame(() => {
-      responseFrame = 0;
-      const box = motionStage.getBoundingClientRect();
-      const x = Math.max(-1, Math.min(1, (point.x - box.left) / box.width * 2 - 1));
-      const y = Math.max(-1, Math.min(1, (point.y - box.top) / box.height * 2 - 1));
-      const travel = point.touch ? 8 : 14;
-      motionStage.style.setProperty("--brand-x", `${(x * travel).toFixed(2)}px`);
-      motionStage.style.setProperty("--brand-y", `${(y * travel * .6).toFixed(2)}px`);
-      motionStage.style.setProperty("--brand-turn", `${(x * .65).toFixed(2)}deg`);
-      motionStage.classList.add("brand-engaged");
+  const traceFrame=(frame,distance,width,height)=> {
+    if(active.has(frame) || performance.now()<(cooldown.get(frame)||0)) return;
+    const ns='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('class','frame-trace-layer');
+    svg.setAttribute('viewBox','0 0 '+(width+1)+' '+(height+1));
+    svg.setAttribute('aria-hidden','true');
+    const perimeter=2*(width+height), half=perimeter/2, tail=Math.min(54,perimeter*.055);
+    const duration=2400, arrival=.88;
+    const route='M.5 .5 H'+(width+.5)+' V'+(height+.5)+' H.5 Z';
+    const animations=[];
+    for(const direction of [1,-1]) {
+      const path=document.createElementNS(ns,'path');
+      path.setAttribute('d',route);
+      path.setAttribute('class','frame-trace-line');
+      svg.append(path);
+      const offset=(travel,length)=>-(distance+direction*travel-(direction===1?length:0));
+      animations.push(path.animate([
+        {strokeDasharray:'0 '+perimeter,strokeDashoffset:offset(0,0),opacity:0,offset:0},
+        {strokeDasharray:tail+' '+(perimeter-tail),strokeDashoffset:offset(half*.08/arrival,tail),opacity:1,offset:.08},
+        {strokeDasharray:tail+' '+(perimeter-tail),strokeDashoffset:offset(half,tail),opacity:1,offset:arrival},
+        {strokeDasharray:tail+' '+(perimeter-tail),strokeDashoffset:offset(half,tail),opacity:0,offset:1}
+      ],{duration,easing:'linear',fill:'both'}));
+    }
+    frame.append(svg);
+    const meeting=svg.querySelector('path').getPointAtLength((distance+half)%perimeter);
+    const spark=document.createElementNS(ns,'circle');
+    spark.setAttribute('class','frame-trace-collision');
+    spark.setAttribute('cx',meeting.x);spark.setAttribute('cy',meeting.y);spark.setAttribute('r','2.5');
+    svg.append(spark);
+    animations.push(spark.animate([{opacity:0,offset:0},{opacity:0,offset:arrival-.015},
+      {opacity:1,offset:arrival+.015},{opacity:0,offset:1}],{duration,fill:'both'}));
+    const effect={svg,animations};active.set(frame,effect);
+    Promise.allSettled(animations.map(animation=>animation.finished)).then(()=> {
+      if(active.get(frame)!==effect) return;
+      svg.remove();active.delete(frame);cooldown.set(frame,performance.now()+300);
     });
   };
-  motionStage.addEventListener("pointermove", event => { if (event.pointerType === "mouse") queueBrandResponse(event); }, { passive: true });
-  motionStage.addEventListener("pointerdown", event => {
-    if (event.target.closest("a, button") || event.pointerType === "mouse") return;
-    clearTimeout(settleTimer);
-    queueBrandResponse(event);
-    settleTimer = setTimeout(resetBrandResponse, 1100);
-  }, { passive: true });
-  motionStage.addEventListener("pointerleave", resetBrandResponse, { passive: true });
-  motionStage.addEventListener("pointercancel", resetBrandResponse, { passive: true });
-  window.addEventListener("scroll", resetBrandResponse, { passive: true });
-  motionPreference.addEventListener("change", resetBrandResponse);
-  document.addEventListener("visibilitychange", resetBrandResponse);
+  motionStage.addEventListener('pointermove',event=> {
+    if(event.pointerType!=='mouse' || motionPreference.matches || document.hidden) return;
+    pending={x:event.clientX,y:event.clientY};
+    if(crossingFrame) return;
+    crossingFrame=requestAnimationFrame(()=> {
+      crossingFrame=0;
+      if(previous) for(const frame of frames) {
+        if(!frame.getClientRects().length || active.has(frame)) continue;
+        const from=frameLocalPoint(frame,previous), to=frameLocalPoint(frame,pending);
+        const hit=frameEdgeCrossing(from,to,to.width,to.height);
+        if(hit) traceFrame(frame,hit.distance,to.width,to.height);
+      }
+      previous=pending;
+    });
+  },{passive:true});
+  motionStage.addEventListener('pointerleave',()=> {
+    cancelAnimationFrame(crossingFrame);crossingFrame=0;previous=undefined;
+  }, {passive:true});
+  motionStage.addEventListener('pointercancel',clearFrameTraces,{passive:true});
+  window.addEventListener('scroll',clearFrameTraces,{passive:true});
+  window.addEventListener('resize',clearFrameTraces);
+  motionPreference.addEventListener('change',clearFrameTraces);
+  document.addEventListener('visibilitychange',clearFrameTraces);
 }
