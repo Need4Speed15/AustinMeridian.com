@@ -7,7 +7,7 @@ const root=resolve(import.meta.dirname,'../dist');
 async function walk(dir){const result=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=resolve(dir,e.name);if(e.isDirectory())result.push(...await walk(p));else result.push(p);}return result;}
 const files=await walk(root);
 const htmlFiles=files.filter(p=>extname(p)==='.html');
-assert.equal(htmlFiles.length,6,'Expected five requested pages and one 404 page');
+assert.equal(htmlFiles.length,7,'Expected six public pages and one 404 page');
 const ids=new Map();
 for(const file of htmlFiles){
   const html=await readFile(file,'utf8');

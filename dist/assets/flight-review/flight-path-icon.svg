@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 3 96 96">
+  <title>Flight Review Companion — Flight Path</title>
+  <desc>An upward-pointing airplane inside an open circular flight path.</desc>
+  <path d="M42 94A44 44 0 1 1 92 33" fill="none" stroke="#55c8ef" stroke-width="4.4" stroke-linecap="round"/>
+  <path fill="#55c8ef" d="M50 19C47 19 45 27 45 31V41L19 51Q16 52 16 55V58L45 54L47 72L36 80Q35 81 35 83V86L48 82L49 87Q50 90 51 87L52 82L65 86V83Q65 81 64 80L53 72L55 54L84 58V55Q84 52 81 51L55 41V31C55 27 53 19 50 19Z"/>
+</svg>
