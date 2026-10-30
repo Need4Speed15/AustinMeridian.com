@@ -176,3 +176,45 @@ window.addEventListener('afterprint', () => {
   closedBeforePrint.forEach(detail => { detail.open = false; });
   closedBeforePrint = [];
 });
+
+// Decorative brand response: one frame per pointer update; touch never captures scrolling.
+if (motionStage) {
+  let responseFrame = 0;
+  let settleTimer = 0;
+  let point;
+  const resetBrandResponse = () => {
+    cancelAnimationFrame(responseFrame);
+    clearTimeout(settleTimer);
+    responseFrame = 0;
+    motionStage.classList.remove("brand-engaged");
+    for (const name of ["--brand-x", "--brand-y", "--brand-turn"]) motionStage.style.removeProperty(name);
+  };
+  const queueBrandResponse = event => {
+    if (motionPreference.matches || document.hidden) return;
+    point = { x: event.clientX, y: event.clientY, touch: event.pointerType !== "mouse" };
+    if (responseFrame) return;
+    responseFrame = requestAnimationFrame(() => {
+      responseFrame = 0;
+      const box = motionStage.getBoundingClientRect();
+      const x = Math.max(-1, Math.min(1, (point.x - box.left) / box.width * 2 - 1));
+      const y = Math.max(-1, Math.min(1, (point.y - box.top) / box.height * 2 - 1));
+      const travel = point.touch ? 8 : 14;
+      motionStage.style.setProperty("--brand-x", `${(x * travel).toFixed(2)}px`);
+      motionStage.style.setProperty("--brand-y", `${(y * travel * .6).toFixed(2)}px`);
+      motionStage.style.setProperty("--brand-turn", `${(x * .65).toFixed(2)}deg`);
+      motionStage.classList.add("brand-engaged");
+    });
+  };
+  motionStage.addEventListener("pointermove", event => { if (event.pointerType === "mouse") queueBrandResponse(event); }, { passive: true });
+  motionStage.addEventListener("pointerdown", event => {
+    if (event.target.closest("a, button") || event.pointerType === "mouse") return;
+    clearTimeout(settleTimer);
+    queueBrandResponse(event);
+    settleTimer = setTimeout(resetBrandResponse, 1100);
+  }, { passive: true });
+  motionStage.addEventListener("pointerleave", resetBrandResponse, { passive: true });
+  motionStage.addEventListener("pointercancel", resetBrandResponse, { passive: true });
+  window.addEventListener("scroll", resetBrandResponse, { passive: true });
+  motionPreference.addEventListener("change", resetBrandResponse);
+  document.addEventListener("visibilitychange", resetBrandResponse);
+}

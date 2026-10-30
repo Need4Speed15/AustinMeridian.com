@@ -164,3 +164,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 }
 @media(max-width:360px){.resource-navigation{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.resource-navigation a{min-height:38px}}
 @media print{.resource-navigation,.copy-email-tools{display:none}.build-details>div{display:block!important}.document-body section.document-summary,.action-card{background:white;color:#111;border-color:#777}.summary-grid p,.action-card>p:not(.eyebrow){color:#222}}
+
+/* Pointer and touch response layers compose with the existing ambient motion. */
+.corporate-hero .meridian-structure{translate:var(--brand-x,0px) var(--brand-y,0px);rotate:var(--brand-turn,0deg);transition:translate .85s cubic-bezier(.2,.7,.2,1),rotate .85s cubic-bezier(.2,.7,.2,1)}
+.corporate-hero .structure-light{opacity:.65;transition:opacity .85s ease}.corporate-hero.brand-engaged .structure-light{opacity:1}
+@media(max-width:680px){.corporate-hero .mobile-meridian{translate:var(--brand-x,0px) var(--brand-y,0px);rotate:var(--brand-turn,0deg);transition:translate .85s cubic-bezier(.2,.7,.2,1),rotate .85s cubic-bezier(.2,.7,.2,1),opacity .85s ease}.corporate-hero.brand-engaged .mobile-meridian{opacity:.29}}
+@media(prefers-reduced-motion:reduce){.corporate-hero .meridian-structure,.corporate-hero .mobile-meridian{translate:none!important;rotate:none!important}.corporate-hero.brand-engaged .mobile-meridian{opacity:.2}}
