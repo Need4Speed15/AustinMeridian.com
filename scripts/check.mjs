@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, relative, extname } from 'node:path';
+import './privacy-check.mjs';
 
 const root=resolve(import.meta.dirname,'../dist');
 async function walk(dir){const result=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=resolve(dir,e.name);if(e.isDirectory())result.push(...await walk(p));else result.push(p);}return result;}
