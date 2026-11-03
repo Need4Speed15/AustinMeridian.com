@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<defs><radialGradient id="bulb" cx=".32" cy=".24" r=".86"><stop stop-color="#c85e7e"/><stop offset=".5" stop-color="#9b3357"/><stop offset="1" stop-color="#54203b"/></radialGradient><linearGradient id="leaf" x2=".8" y2="1"><stop stop-color="#a0b86d"/><stop offset="1" stop-color="#416744"/></linearGradient></defs>
+<path d="M66 61C59 44 34 39 24 17C42 8 60 21 64 42C65 20 75 8 88 5C99 24 87 42 75 48C91 29 108 30 117 36C114 53 93 61 76 61" fill="url(#leaf)"/>
+<g fill="none" stroke="#ac516a" stroke-width="3.5" stroke-linecap="round"><path d="M65 65C61 45 47 31 33 22M68 61C68 40 76 24 85 13M72 62C86 48 97 42 109 39"/></g>
+<path d="M63 113C67 122 63 124 55 126C61 119 58 116 57 110" fill="#6c2847"/>
+<path d="M64 55C44 48 25 65 25 85C25 105 47 115 62 117C78 116 101 103 102 84C102 66 86 50 70 55Z" fill="url(#bulb)" stroke="#63253f" stroke-width="2"/>
+<path d="M36 75C40 63 49 59 58 61M34 84C34 87 35 89 36 91" fill="none" stroke="#ed9bad" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+<g fill="none" stroke="#6e2948" stroke-width="1.5" stroke-linecap="round" opacity=".5"><path d="M72 73l10-2M79 91l12-3M43 99l11 3M67 108l8-2"/></g></svg>

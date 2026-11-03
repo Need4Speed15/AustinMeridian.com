@@ -25,3 +25,9 @@ An optional authoring helper, `scripts/optimize-assets.mjs`, prepares WebP image
 Deadway uses its supplied ticket logo and actual development captures with visible milestone captions. Images are optimized for web delivery; no scene content is added. Preserve the full logo and development labels.
 
 The dedicated page serves Oswald under its included SIL Open Font License and Roboto Slab under its included Apache License 2.0. Both font files and their notices are in `public/assets/deadway/`.
+
+## Beet Farmer
+
+Beet Farmer uses its supplied Cozy Wordmark and beet icon. Preserve the logo’s proportions, colors, and full lettering. Development captures retain visible labels for scripted cameras, staged inventory, and the relevant milestone. No scene content is added.
+
+The dedicated page serves Fraunces and Bricolage Grotesque under their included SIL Open Font License notices in `public/assets/beet-farmer/`. Keep both notices with the fonts.
