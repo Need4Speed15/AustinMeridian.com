@@ -19,3 +19,10 @@ The sans-serif stack names Inter, Segoe UI, Arial and a generic sans-serif fallb
 ## Maintenance
 
 An optional authoring helper, `scripts/optimize-assets.mjs`, prepares WebP images and WOFF2 subsets from the existing source assets. Published builds use committed assets and do not need those authoring tools.
+
+## Deadway
+
+Deadway uses its supplied ticket logo and actual development captures with visible milestone captions. Images are optimized for web delivery; no scene content is added. Preserve the full logo and development labels.
+
+The dedicated page serves Oswald under its included SIL Open Font License and Roboto Slab under its included Apache License 2.0. Both font files and their notices are in `public/assets/deadway/`.
+
