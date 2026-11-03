@@ -188,3 +188,5 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 
 /* Beet Farmer has a paper, plum and sage project identity. */
 .venture-beet{--accent:#81304D;--muted:#544B54;background:linear-gradient(120deg,#D4C3A7,#BEC7AB);border-color:#9D967E;color:#382C3D}.venture-beet .venture-identity{border-color:#AEA48F}.venture-beet-logo{width:260px;max-width:100%;height:auto;margin:20px 0}.venture-beet .venture-category,.venture-beet .venture-number{color:#544B54}.venture-beet .venture-identity .status-label{animation:none;color:#81304D}.venture-beet .venture-description>p:first-child{color:#382C3D}.venture-beet .venture-description>.button{background:#81304D;border-color:#81304D;color:#FFF3DF}.venture-beet .venture-description>.button:hover{background:#382C3D;border-color:#382C3D;color:#FFF3DF}.venture-beet .project-availability{color:#544B54}.venture-beet .venture-lines i{border-color:#81304D55}.venture-beet:hover{border-color:#81304D}
+
+.venture-fitquest-logo{width:340px;max-width:100%;height:auto;margin:30px 0 24px}
