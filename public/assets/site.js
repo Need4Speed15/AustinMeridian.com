@@ -6,8 +6,6 @@
   try { seen = sessionStorage.getItem('am-intro-v1') === 'seen'; } catch {}
   if (dialog && !seen && !location.hash && !preference.matches && typeof dialog.showModal === 'function') {
     const video = dialog.querySelector('video');
-    const start = dialog.querySelector('.intro-start');
-    const play = dialog.querySelector('.intro-play');
     const sound = dialog.querySelector('.intro-sound');
     let complete = false;
     let stallTimer;
@@ -33,24 +31,25 @@
       clearStall();
       stallTimer = setTimeout(finish, 15000);
     };
-    const requestPlay = () => {
-      if (complete) return;
-      clearStall();
-      start.hidden = false;
-      sound.hidden = true;
-      play.focus();
+    const updateSound = () => {
+      sound.textContent = video.muted ? 'Enable sound' : 'Sound on';
+      sound.setAttribute('aria-label', video.muted ? 'Unmute intro audio' : 'Mute intro audio');
     };
-    const begin = () => {
-      if (complete) return;
+    const begin = async () => {
+      if (complete || document.hidden) return;
       const attempt = ++attempts;
-      start.hidden = true;
       watchStall();
-      // The first play call requests the supplied audio; never silently mute it.
-      video.play().catch(() => {
+      try {
+        await video.play();
+      } catch {
         if (complete || attempt !== attempts) return;
-        if (video.error) finish();
-        else requestPlay();
-      });
+        if (video.error) { finish(); return; }
+        // Audible autoplay may be blocked. Continue immediately with muted video.
+        video.muted = true;
+        updateSound();
+        try { await video.play(); }
+        catch { if (!complete && attempt === attempts) finish(); }
+      }
     };
     dialog.addEventListener('cancel', event => event.preventDefault());
     dialog.addEventListener('keydown', event => {
@@ -61,22 +60,21 @@
     video.addEventListener('error', finish);
     video.addEventListener('playing', () => {
       if (complete) return;
-      start.hidden = true;
+      updateSound();
       sound.hidden = false;
       watchStall();
     });
     video.addEventListener('timeupdate', () => { if (!complete && !video.paused) watchStall(); });
-    video.addEventListener('waiting', () => { if (!complete && start.hidden) watchStall(); });
-    video.addEventListener('pause', () => { if (!complete && !video.ended) requestPlay(); });
-    play.addEventListener('click', begin);
+    video.addEventListener('waiting', () => { if (!complete && !document.hidden) watchStall(); });
     sound.addEventListener('click', () => {
       video.muted = !video.muted;
-      sound.textContent = video.muted ? 'Sound off' : 'Sound on';
-      sound.setAttribute('aria-label', video.muted ? 'Unmute intro audio' : 'Mute intro audio');
+      updateSound();
     });
     preference.addEventListener('change', event => { if (event.matches) finish(); });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && !complete) { attempts++; video.pause(); requestPlay(); }
+      if (complete) return;
+      if (document.hidden) { attempts++; clearStall(); video.pause(); }
+      else begin();
     });
     document.documentElement.classList.add('intro-active');
     dialog.showModal();

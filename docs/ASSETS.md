@@ -34,5 +34,4 @@ The dedicated page serves Fraunces and Bricolage Grotesque under their included 
 
 ## Company introduction
 
-The homepage uses the supplied four-second H.264/AAC company introduction, prepared for progressive MP4 playback with the original audio retained. No video is loaded on project or resource pages. The intro requests audible playback, with a play-button fallback when the browser requires a user gesture.
-
+The homepage uses the supplied four-second H.264/AAC company introduction, prepared for progressive MP4 playback with the original audio retained. No video is loaded on project or resource pages. The intro requests audible playback, falling back immediately to muted autoplay when the browser blocks audio. A sound button lets visitors enable audio during playback.
