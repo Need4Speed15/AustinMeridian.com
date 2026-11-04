@@ -25,7 +25,7 @@
         video.removeAttribute('src');
         video.load();
         document.querySelector('#main')?.focus({preventScroll:true});
-      }, preference.matches ? 0 : 400);
+      }, preference.matches ? 0 : 1800);
     };
     const watchStall = () => {
       clearStall();
