@@ -1,3 +1,92 @@
+// A short company introduction on the first unanchored homepage visit.
+{
+  const dialog = document.querySelector('.company-intro');
+  const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let seen = false;
+  try { seen = sessionStorage.getItem('am-intro-v1') === 'seen'; } catch {}
+  if (dialog && !seen && !location.hash && !preference.matches && typeof dialog.showModal === 'function') {
+    const video = dialog.querySelector('video');
+    const start = dialog.querySelector('.intro-start');
+    const play = dialog.querySelector('.intro-play');
+    const sound = dialog.querySelector('.intro-sound');
+    let complete = false;
+    let stallTimer;
+    let attempts = 0;
+    const clearStall = () => clearTimeout(stallTimer);
+    const finish = () => {
+      if (complete) return;
+      complete = true;
+      attempts++;
+      clearStall();
+      video.pause();
+      try { sessionStorage.setItem('am-intro-v1', 'seen'); } catch {}
+      dialog.classList.add('intro-finished');
+      setTimeout(() => {
+        dialog.close();
+        document.documentElement.classList.remove('intro-active');
+        video.removeAttribute('src');
+        video.load();
+        document.querySelector('#main')?.focus({preventScroll:true});
+      }, preference.matches ? 0 : 400);
+    };
+    const watchStall = () => {
+      clearStall();
+      stallTimer = setTimeout(finish, 15000);
+    };
+    const requestPlay = () => {
+      if (complete) return;
+      clearStall();
+      start.hidden = false;
+      sound.hidden = true;
+      play.focus();
+    };
+    const begin = () => {
+      if (complete) return;
+      const attempt = ++attempts;
+      start.hidden = true;
+      watchStall();
+      // The first play call requests the supplied audio; never silently mute it.
+      video.play().catch(() => {
+        if (complete || attempt !== attempts) return;
+        if (video.error) finish();
+        else requestPlay();
+      });
+    };
+    dialog.addEventListener('cancel', event => event.preventDefault());
+    dialog.addEventListener('keydown', event => {
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); }
+    }, true);
+    window.addEventListener('hashchange', () => { if (location.hash) finish(); });
+    video.addEventListener('ended', finish);
+    video.addEventListener('error', finish);
+    video.addEventListener('playing', () => {
+      if (complete) return;
+      start.hidden = true;
+      sound.hidden = false;
+      watchStall();
+    });
+    video.addEventListener('timeupdate', () => { if (!complete && !video.paused) watchStall(); });
+    video.addEventListener('waiting', () => { if (!complete && start.hidden) watchStall(); });
+    video.addEventListener('pause', () => { if (!complete && !video.ended) requestPlay(); });
+    play.addEventListener('click', begin);
+    sound.addEventListener('click', () => {
+      video.muted = !video.muted;
+      sound.textContent = video.muted ? 'Sound off' : 'Sound on';
+      sound.setAttribute('aria-label', video.muted ? 'Unmute intro audio' : 'Mute intro audio');
+    });
+    preference.addEventListener('change', event => { if (event.matches) finish(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && !complete) { attempts++; video.pause(); requestPlay(); }
+    });
+    document.documentElement.classList.add('intro-active');
+    dialog.showModal();
+    video.muted = false;
+    video.volume = 1;
+    video.src = video.dataset.src;
+    begin();
+  }
+}
+
 const toggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#primary-nav');
 function closeMenu(returnFocus = false) {

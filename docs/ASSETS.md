@@ -31,3 +31,8 @@ The dedicated page serves Oswald under its included SIL Open Font License and Ro
 Beet Farmer uses its supplied Cozy Wordmark and beet icon. Preserve the logo’s proportions, colors, and full lettering. Development captures retain visible labels for scripted cameras, staged inventory, and the relevant milestone. No scene content is added.
 
 The dedicated page serves Fraunces and Bricolage Grotesque under their included SIL Open Font License notices in `public/assets/beet-farmer/`. Keep both notices with the fonts.
+
+## Company introduction
+
+The homepage uses the supplied four-second H.264/AAC company introduction, prepared for progressive MP4 playback with the original audio retained. No video is loaded on project or resource pages. The intro requests audible playback, with a play-button fallback when the browser requires a user gesture.
+
