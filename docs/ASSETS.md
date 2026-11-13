@@ -35,3 +35,9 @@ The dedicated page serves Fraunces and Bricolage Grotesque under their included 
 ## Company introduction
 
 The homepage uses the supplied four-second H.264/AAC company introduction, prepared for progressive MP4 playback with the original audio retained. No video is loaded on project or resource pages. The intro requests audible playback, falling back immediately to muted autoplay when the browser blocks audio. A sound button lets visitors enable audio during playback.
+
+## Folio
+
+Folio uses its selected forest-green icon, linen texture and botanical ornament. Preserve the complete icon and gold frame. Preview captions disclose Android emulator/Expo Go development captures with fictional Demo data and staged dates. Keep the full-size capture links and development-tool disclosures.
+
+Libre Caslon Text and DM Sans are served with their included SIL Open Font License notices in `public/assets/folio/`. Keep the notices and copyright statements with the font files.
